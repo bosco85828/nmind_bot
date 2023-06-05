@@ -103,9 +103,12 @@ def handle_message(event):
     
     if re.search(r'^\/.*',msg_text):
         search_code=msg_text[1:]
-        result=new_snk_data(search_code)
-        print(result)
-        try : sendtext(event,json.dumps(result))
+        try:
+            result=json.dumps(new_snk_data(search_code)).replace(",","\n")
+        except Exception as err : 
+            sendtext(event,err)
+        
+        try : sendtext(event,result)
         except Exception as err : 
             sendtext(event,{err})
     

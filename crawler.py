@@ -186,7 +186,7 @@ def new_snk_data(id):
     count=0
     while size <= maxsize :
         if price_list[count] == 0 : 
-            size_dict[size]="已售完"
+            size_dict[size]="None"
             
         else :     
             size_dict[size]=int((int(price_list[count]) * 1.07) + 990)
