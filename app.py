@@ -101,7 +101,7 @@ def handle_message(event):
     msg_text= event.message.text
     msg_type= event.type
     
-    if re.search(r'^\/.*$',msg_text):
+    if re.search(r'^\/.*',msg_text):
         search_code=msg_text[1:]
         
         try : sendtext(event,new_snk_data(search_code))
@@ -109,7 +109,8 @@ def handle_message(event):
             sendtext(event,{err})
     
     else:
-        sendtext(event,"test123") 
+        sendtext(event,"Please input type for '/your_id'") 
 
 if __name__ == "__main__":
+
     app.run(host="0.0.0.0")

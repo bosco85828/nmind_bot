@@ -152,7 +152,7 @@ def get_kream_data(id):
     return result
 
 
-def new_snk_data(id,specified_size):
+def new_snk_data(id):
     # url="https://snkrdunk.com/v1/sneakers/{}/size/list".format(id)
     # headers={
     #     # "user-agent":"user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",        
