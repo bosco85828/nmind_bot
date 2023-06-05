@@ -107,6 +107,6 @@ def handle_message(event):
         try : sendtext(event,new_snk_data(search_code))
         except Exception as err : 
             sendtext(event,{err})
-            
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=80)
+    app.run(host="0.0.0.0")
