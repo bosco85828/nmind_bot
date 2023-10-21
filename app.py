@@ -106,7 +106,7 @@ def handle_message(event):
         try:
             data=main(search_code)
             if data:
-                result=json.dumps(data).replace('}, {','\n').replace('[{','\n')
+                result=json.dumps(data).replace('}, {','\n').replace('[{','\n').replace('],','\n')
             else : 
                 sendtext(event,"查無此產品")  
         except Exception as err : 
