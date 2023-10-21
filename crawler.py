@@ -2,7 +2,7 @@ from datetime import datetime,timezone,timedelta
 from pprint import pprint
 import requests
 from selenium.common.exceptions import NoSuchElementException,TimeoutException
-from selenium import webdriver
+from seleniumwire import webdriver
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
@@ -14,103 +14,70 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 import pytz
-
+import re
 from dotenv import load_dotenv
 import os 
-# options = Options()
-# options.add_argument("--disable-notifications")    
-# # options.add_argument("--headless")
-# options.add_argument('--disable-gpu')
-# options.add_argument('--no-sandbox')
-# # options.add_argument('blink-settings=imagesEnabled=false')
-# options.add_argument('--disable-dev-shm-usage')
+from datetime import datetime, timezone , timedelta
 
-# s=Service(ChromeDriverManager().install())
-# global browser
-# browser = webdriver.Chrome(service=s, options=options)
+options = Options()
+options.add_argument("--disable-notifications")    
+# options.add_argument("start-maximized")
+options.add_argument("--window-size=1920,1080")
+options.add_argument("--headless")
+options.add_argument('--disable-gpu')
+options.add_argument('--no-sandbox')
+options.add_argument('--enable-logging')
+# options.add_argument('blink-settings=imagesEnabled=false')
+options.add_argument('--disable-dev-shm-usage')
 
-def get_snk_data(id):
-    browser.get("https://snkrdunk.com/accounts/login/")
-    global wait
-    wait=WebDriverWait(browser,10)
+browser = webdriver.Chrome(options=options)
 
-    locator=(By.XPATH,'//div[@id="bcIframeWrap"]/iframe[@id="buyee-bcFrame"]')
-    frame=wait.until(EC.presence_of_element_located(locator))
+current_time=datetime.now().strftime("%Y%m%d%H%M%S%z")
 
-    browser.switch_to.frame(frame)
 
+def get_kream_token():
     
+    count_=0
+    while count_ < 3 : 
+        browser.get("https://kream.co.kr/login")
+        global wait
+        browser.maximize_window()
+        wait=WebDriverWait(browser,10)
+        locator=(By.XPATH,'//input[@type="email"]')
+        acount=wait.until(EC.presence_of_element_located(locator))
+        locator=(By.XPATH,'//input[@type="password"]')
+        password=wait.until(EC.presence_of_element_located(locator))
 
-    locator=(By.XPATH,'//div[@class="bc__closeBtn"]//i')
-    close=wait.until(EC.element_to_be_clickable(locator))
-    close.click()
-
-    browser.switch_to.default_content()
-
-    locator=(By.XPATH,'//input[@name="email"]')
-    acount=wait.until(EC.presence_of_element_located(locator))
-    locator=(By.XPATH,'//input[@name="password"]')
-    password=wait.until(EC.presence_of_element_located(locator))
-
-    acount.send_keys('bosco85828@gmail.com')
-    password.send_keys('bosco85828')
-    
-    locator=(By.XPATH,'//button[@class="button-type-1 button-collor-black opacity-link"]')
-    submit=wait.until(EC.element_to_be_clickable(locator))
-    
-    # action = ActionChains(browser)
-    # action.move_to_element(submit)
-    # action.perform()
-
-    try:
+        acount.send_keys('liyuqian93117@naver.com')
+        password.send_keys('931117@lyq')
+        
+        locator=(By.XPATH,'//a[@class="btn full solid"]')
+        submit=wait.until(EC.element_to_be_clickable(locator))
         submit.click()
-    except :
-        # 調整點擊位置
-        action = ActionChains(browser)
-        action.move_to_element_with_offset(submit, 5, 5)
-        action.click()
-        action.perform()
-
-    # submit.click()
-    browser.get(f"https://snkrdunk.com/buy/{id}/size/")
-    locator=(By.XPATH,'//ul[@class="buy-size-select-box"]//p[@class="num"]')
-    sizes=wait.until(EC.presence_of_all_elements_located(locator))
-    locator=(By.XPATH,'//ul[@class="buy-size-select-box"]//p[@class="size-price"]')
-    prices=wait.until(EC.presence_of_all_elements_located(locator))
-    
-    price_dict={}
-    for size in sizes:
-        price_dict[size.text] = None
-
-    for i in range(len(price_dict)):
-        index=list(price_dict.keys())[i]
-        price_dict[index]=prices[i].text
-    
-    browser.quit()
-    
-    return price_dict    
-
-def search_size(price_dict,size):
-    size=str(size)+"cm"
-    return price_dict[size]
-
-def get_kream_data(id):
-    browser.get("https://kream.co.kr/login")
-    global wait
-    browser.maximize_window()
-    wait=WebDriverWait(browser,10)
-    locator=(By.XPATH,'//input[@type="email"]')
-    acount=wait.until(EC.presence_of_element_located(locator))
-    locator=(By.XPATH,'//input[@type="password"]')
-    password=wait.until(EC.presence_of_element_located(locator))
-
-    acount.send_keys('liyuqian93117@naver.com')
-    password.send_keys('931117@lyq')
-    
-    locator=(By.XPATH,'//a[@class="btn full solid"]')
-    submit=wait.until(EC.element_to_be_clickable(locator))
-    submit.click()
-
+        time.sleep(3)
+        browser.get("https://kream.co.kr/my")
+        token=None
+        device_id=None
+        for i in browser.requests :
+            # if "unread" in str(i) : 
+            #     print(i)
+            if i.headers['Authorization'] : 
+                
+                token=i.headers['Authorization']                
+                
+            if i.headers['x-kream-device-id']:
+                device_id=i.headers['x-kream-device-id']
+            
+            if token and device_id : 
+                with open('token.txt','w+') as f : 
+                    f.write(str(token + "," +device_id))
+                return (token,device_id)
+        else : 
+            browser.get_screenshot_as_file("1.png")
+            count_+=1
+            continue
+    else : 
+        return None
     # locator=(By.XPATH,'//a[@class="btn_search"]')
     # search=wait.until(EC.element_to_be_clickable(locator))
     # search.click()
@@ -135,9 +102,12 @@ def get_kream_data(id):
     locator=(By.XPATH,'//a[@class="btn_size"]')
     size_btn=wait.until(EC.element_to_be_clickable(locator))
     size_btn.click()
+    
+    
 
     locator=(By.XPATH,'//ul[@class="select_list"]/li//span[@class="size"]')
     sizes=wait.until(EC.presence_of_all_elements_located(locator))
+
     locator=(By.XPATH,'//ul[@class="select_list"]/li//span[@class="price"]')
     prices=wait.until(EC.presence_of_all_elements_located(locator))
 
@@ -150,6 +120,56 @@ def get_kream_data(id):
         result[index]=prices[i].text
     
     return result
+
+
+
+
+def get_kream_id(id):
+    url=f"https://kream.co.kr/search?keyword={id}"
+    header={
+        'user-agent':'Mozilla/5.0 (Macintosh; Intel Mc OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
+    }
+    data=requests.get(url,headers=header).text
+    try : id=re.search(r'product:\{release:\{id:(\d{5}),',data).group(1)
+    except AttributeError : 
+        return None
+    # \{display_type:\"product\",product:\{release:\{id:(.*),$
+    return id
+
+def get_kream_result(kream_id):
+    if not kream_id : 
+        return None
+    url = f"https://kream.co.kr/api/p/products/{kream_id}/"
+    try:
+        with open('token.txt','r+') as f :
+            token,device_id=tuple(f.read().split(','))
+    except : 
+        token,device_id=get_kream_token()
+    print('token:'+ token)
+    print('device_id:' + device_id)
+
+    header={
+        'user-agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
+        'Authorization':token,
+        'x-kream-api-version': '22' ,
+        'x-kream-client-datetime': f'{current_time}+0800' ,
+        'x-kream-device-id': device_id ,
+        'x-kream-web-build-version': '4.15.7' 
+    }
+    result=requests.get(url,headers=header).json()
+
+    try : 
+        if 'expired' in  result['description'] : 
+            token,device_id=get_kream_token()
+            header['Authorization']=token
+            header['x-kream-device-id']=device_id
+            result=requests.get(url,headers=header).json()
+    except KeyError: 
+        pass
+
+    data=[ {'size':info['option'],'price':info['lowest_ask']}  for info in result['sales_options'] ]
+
+    return data
 
 
 def new_snk_data(id):
@@ -169,7 +189,11 @@ def new_snk_data(id):
     }
 
     data=requests.get(url,headers=headers).json()
+
+    if data['status'] == "failure" : 
+        return None
     prices=data['data']['minPriceOfSizeList']
+    
     price_list=[ x['price'] for x in prices if x]
     # print(price_list)
     minsize,maxsize = (23,32)
@@ -181,34 +205,48 @@ def new_snk_data(id):
     if temp_maxsize != 0 :
         maxsize = temp_maxsize
 
-    size_dict={}
+    infos=[]
     size=float(minsize)
     count=0
     while size <= maxsize :
+        size_dict={}
         if price_list[count] == 0 : 
-            size_dict[size]="None"
+            # size_dict[size]="None"
+            size_dict['size']=size
+            size_dict['price']="None"
             
         else :     
-            size_dict[size]=int((int(price_list[count]) * 1.07) + 990)
-
+            size_dict['size']=size
+            size_dict['price']=int((int(price_list[count]) * 1.07) + 990)
+            # size_dict[size]=int((int(price_list[count]) * 1.07) + 990)
+        infos.append(size_dict)
         size+=0.5
         count+=1
 
 
 
     # return (size_dict[int(specified_size)] *1.07) + 990 
-    return size_dict
+    return infos
 
-def test1():
-    url="https://snkrdunk.com/v1/sneakers/CW1590-100/size/list"
-    headers={
-        "User-Agent":"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36",
+def main(id):
+    data_dict={
+        'snk':new_snk_data(id),
+        'kream':get_kream_result(get_kream_id(id))
     }
+    return data_dict
 
-    print(requests.get(url,headers=headers).json())
     
 if __name__ == "__main__":
-    pprint(new_snk_data('DZ1382-001','24'))
+    # pprint(new_snk_data('DZ1382-00'))
+    # pprint(new_snk_data('DZ1382-001'))
+    # print(get_kream_token())
+    # print(get_kream_id('DZ1382-001'))
+    # print(get_kream_id('DZ1382-001'))
+    # pprint(get_kream_result(get_kream_id('djiopajdopiasd')))
+    pprint(main('sdjaiodjh'))
+
+    
+    
 # print(search_size(get_snk_data('DD1391-103'),23.5))
 # print(get_kream_data('DD1391103'))
 # pprint(test1())

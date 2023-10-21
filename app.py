@@ -14,7 +14,7 @@ from linebot.models import (
 from oauth2client.service_account import ServiceAccountCredentials
 from dotenv import load_dotenv
 import os 
-from crawler import new_snk_data
+from crawler import main
 
 load_dotenv()
 
@@ -104,11 +104,15 @@ def handle_message(event):
     if re.search(r'^\/.*',msg_text):
         search_code=msg_text[1:]
         try:
-            result=json.dumps(new_snk_data(search_code)).replace(",","\n")
+            data=main(search_code)
+            if data:
+                result=json.dumps(data).replace(",","\n")
+            else : 
+                sendtext(event,"查無此產品")  
         except Exception as err : 
             sendtext(event,err)
         
-        try : sendtext(event,result)
+        try : sendtext(event,search_code + '\n' + result)
         except Exception as err : 
             sendtext(event,{err})
     
