@@ -130,7 +130,7 @@ def get_kream_id(id):
         'user-agent':'Mozilla/5.0 (Macintosh; Intel Mc OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
     }
     data=requests.get(url,headers=header).text
-    try : id=re.search(r'product:\{release:\{id:(\d{5}),',data).group(1)
+    try : id=re.search(r'product:\{release:\{id:(\d+),',data).group(1)
     except AttributeError : 
         return None
     # \{display_type:\"product\",product:\{release:\{id:(.*),$
@@ -243,7 +243,7 @@ if __name__ == "__main__":
     # print(get_kream_id('DZ1382-001'))
     # print(get_kream_id('DZ1382-001'))
     # pprint(get_kream_result(get_kream_id('djiopajdopiasd')))
-    pprint(main('sdjaiodjh'))
+    pprint(main('FZ3124-200'))
 
     
     
