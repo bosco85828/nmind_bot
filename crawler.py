@@ -71,12 +71,14 @@ def get_kream_token():
             if token and device_id : 
                 with open('token.txt','w+') as f : 
                     f.write(str(token + "," +device_id))
+                browser.quit()
                 return (token,device_id)
         else : 
             browser.get_screenshot_as_file("1.png")
             count_+=1
             continue
     else : 
+        browser.quit()
         return None
     # locator=(By.XPATH,'//a[@class="btn_search"]')
     # search=wait.until(EC.element_to_be_clickable(locator))
@@ -229,9 +231,19 @@ def new_snk_data(id):
     return infos
 
 def main(id):
+    try : snk_data=new_snk_data(id)
+    except Exception as err : 
+        print(err)
+        snk_data=None
+    
+    try : kream_data=get_kream_result(get_kream_id(id))
+    except Exception as err : 
+        print(err)
+        kream_data=None
+
     data_dict={
-        'snk':new_snk_data(id),
-        'kream':get_kream_result(get_kream_id(id))
+        'snk':snk_data,
+        'kream':kream_data
     }
     return data_dict
 
