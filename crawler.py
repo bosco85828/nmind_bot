@@ -234,12 +234,12 @@ def main(id):
     try : snk_data=new_snk_data(id)
     except Exception as err : 
         print(err)
-        snk_data=None
+        snk_data="Something error"
     
     try : kream_data=get_kream_result(get_kream_id(id))
     except Exception as err : 
         print(err)
-        kream_data=None
+        kream_data="Something error"
 
     data_dict={
         'snk':snk_data,
