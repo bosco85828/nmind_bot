@@ -127,21 +127,35 @@ def get_kream_token():
 
 
 def get_kream_id(id):
-    url=f"https://kream.co.kr/search?keyword={id}"
-    header={
-        'user-agent':'Mozilla/5.0 (Macintosh; Intel Mc OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
-    }
-    data=requests.get(url,headers=header).text
-    try : id=re.search(r'product:\{release:\{id:(\d+),',data).group(1)
-    except AttributeError : 
-        return None
+    # url=f"https://kream.co.kr/search?keyword={id}"
+    # header={
+    #     'user-agent':'Mozilla/5.0 (Macintosh; Intel Mc OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
+    # }
+    # data=requests.get(url,headers=header).text
+    # try : id=re.search(r'product:\{release:\{id:(\d+),',data).group(1)
+    # except AttributeError : 
+    #     return None
+    
+    browser.get(f"https://kream.co.kr/search?keyword={id}")
+    global wait
+    browser.maximize_window()
+    wait=WebDriverWait(browser,10)
+    locator=(By.XPATH,'//div[contains(@class, "search_result_item") and contains(@class, "product")]')
+    result=wait.until(EC.presence_of_element_located(locator))
+    kream_id = result.get_attribute('data-product-id')
+    
+    return kream_id
+    
+    
     # \{display_type:\"product\",product:\{release:\{id:(.*),$
     return id
+
+
 
 def get_kream_result(kream_id):
     if not kream_id : 
         return None
-    url = f"https://kream.co.kr/api/p/products/{kream_id}/"
+    url = f"https://api.kream.co.kr/api/p/products/{kream_id}/"
     try:
         with open('token.txt','r+') as f :
             token,device_id=tuple(f.read().split(','))
@@ -152,12 +166,16 @@ def get_kream_result(kream_id):
 
     header={
         'user-agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
-        'Authorization':token,
-        'x-kream-api-version': '22' ,
+        # 'Authorization':token,
+        'x-kream-api-version': '30' ,
         'x-kream-client-datetime': f'{current_time}+0800' ,
         'x-kream-device-id': device_id ,
-        'x-kream-web-build-version': '4.15.7' 
+        'x-kream-web-build-version': '5.4.6' ,
+        'x-kream-web-request-secret': 'kream-djscjsghdkd'
     }
+    # result=requests.get(url,headers=header)
+    # print(result)
+    # return
     result=requests.get(url,headers=header).json()
 
     try : 
@@ -169,6 +187,7 @@ def get_kream_result(kream_id):
     except KeyError: 
         pass
 
+    print(result)
     data=[ {'size':info['option'],'price':info['lowest_ask']}  for info in result['sales_options'] ]
 
     return data
@@ -231,6 +250,7 @@ def new_snk_data(id):
     return infos
 
 def main(id):
+    
     try : snk_data=new_snk_data(id)
     except Exception as err : 
         print(err)
