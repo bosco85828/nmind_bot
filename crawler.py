@@ -7,30 +7,44 @@ from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import time
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.keys import Keys
+# from selenium.webdriver.chrome.options import Options
+# from selenium.webdriver.chrome.service import Service
+# from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.action_chains import ActionChains
+# from selenium.webdriver.common.action_chains import ActionChains
 import pytz
 import re
 from dotenv import load_dotenv
 import os 
 from datetime import datetime, timezone , timedelta
+from china_crawler import main as china_crawler_main
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 options = Options()
-options.add_argument("--disable-notifications")    
-# options.add_argument("start-maximized")
+options.add_argument("--disable-notifications")
 options.add_argument("--window-size=1920,1080")
 options.add_argument("--headless")
 options.add_argument('--disable-gpu')
 options.add_argument('--no-sandbox')
 options.add_argument('--enable-logging')
-# options.add_argument('blink-settings=imagesEnabled=false')
 options.add_argument('--disable-dev-shm-usage')
 
-browser = webdriver.Chrome(options=options)
+browser = webdriver.Chrome(options=options)  # Selenium Manager 會自動處理驅動程式
+
+# options = Options()
+# options.add_argument("--disable-notifications")    
+# # options.add_argument("start-maximized")
+# options.add_argument("--window-size=1920,1080")
+# options.add_argument("--headless")
+# options.add_argument('--disable-gpu')
+# options.add_argument('--no-sandbox')
+# options.add_argument('--enable-logging')
+# # options.add_argument('blink-settings=imagesEnabled=false')
+# options.add_argument('--disable-dev-shm-usage')
+# service=Service(ChromeDriverManager().install())
+# browser = webdriver.Chrome(service=service , options=options)
 
 current_time=datetime.now().strftime("%Y%m%d%H%M%S%z")
 
@@ -251,18 +265,25 @@ def new_snk_data(id):
 
 def main(id):
     
-    try : snk_data=new_snk_data(id)
+    try : snk_data = new_snk_data(id)
     except Exception as err : 
         print(err)
         snk_data="Something error"
-    
-    try : kream_data=get_kream_result(get_kream_id(id))
+
+    try : china_data = china_crawler_main(id)
     except Exception as err : 
         print(err)
-        kream_data="Something error"
+        china_data="Something error"
+    kream_data=get_kream_result(get_kream_id(id))
+    # try : kream_data=get_kream_result(get_kream_id(id))
+    # except Exception as err : 
+    #     print(err)
+    #     kream_data="Something error"
+    
 
     data_dict={
         'snk':snk_data,
+        'china':china_data,
         'kream':kream_data
     }
     return data_dict
@@ -275,7 +296,7 @@ if __name__ == "__main__":
     # print(get_kream_id('DZ1382-001'))
     # print(get_kream_id('DZ1382-001'))
     # pprint(get_kream_result(get_kream_id('djiopajdopiasd')))
-    pprint(main('FZ3124-200'))
+    pprint(main('MR530AD'))
 
     
     

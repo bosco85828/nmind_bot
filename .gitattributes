@@ -1,0 +1,2 @@
+Linux_x64/1192597/chrome-linux.zip filter=lfs diff=lfs merge=lfs -text
+google-chrome-stable_current_amd64.deb filter=lfs diff=lfs merge=lfs -text
