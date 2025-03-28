@@ -114,7 +114,7 @@ def handle_message(event):
         except Exception as err : 
             sendtext(event,err)
         
-        try : sendtext(event,search_code + '\n' + result)
+        try : sendtext(event,search_code + '查詢結果如下\n' + result)
         except Exception as err : 
             sendtext(event,{err})
     

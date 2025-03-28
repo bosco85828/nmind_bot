@@ -19,7 +19,21 @@ class Crawler:
         
         raw_data = requests.get(url).json()
         product_infos = raw_data['data']['products'][0]['variants']
-        result_list = [ {'size':product_info['options'][1]['value'],'price':product_info['price']} for product_info in product_infos ]
+        result_list = []
+        for product_info in product_infos:
+            try : 
+                price =((float(product_info['price']) + 5) * 4.55 ) + 100
+            except : 
+                price = None
+            
+            result_list.append(
+                {
+                    'size':product_info['options'][1]['value'],
+                    'price':price
+                }
+            )
+
+        result_list = [ {'size':product_info['options'][1]['value'],'price':float(product_info['price'])} for product_info in product_infos ]
         sorted_result_list = sorted(result_list, key=lambda x: float(x['size']))
                 
         return sorted_result_list

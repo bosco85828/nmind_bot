@@ -10,8 +10,8 @@ import time
 # from selenium.webdriver.chrome.options import Options
 # from selenium.webdriver.chrome.service import Service
 # from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+# from selenium.webdriver.support.ui import WebDriverWait
+# from selenium.webdriver.support import expected_conditions as EC
 # from selenium.webdriver.common.action_chains import ActionChains
 import pytz
 import re
@@ -19,19 +19,19 @@ from dotenv import load_dotenv
 import os 
 from datetime import datetime, timezone , timedelta
 from china_crawler import main as china_crawler_main
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+# from selenium import webdriver
+# from selenium.webdriver.chrome.options import Options
 
-options = Options()
-options.add_argument("--disable-notifications")
-options.add_argument("--window-size=1920,1080")
-options.add_argument("--headless")
-options.add_argument('--disable-gpu')
-options.add_argument('--no-sandbox')
-options.add_argument('--enable-logging')
-options.add_argument('--disable-dev-shm-usage')
+# options = Options()
+# options.add_argument("--disable-notifications")
+# options.add_argument("--window-size=1920,1080")
+# options.add_argument("--headless")
+# options.add_argument('--disable-gpu')
+# options.add_argument('--no-sandbox')
+# options.add_argument('--enable-logging')
+# options.add_argument('--disable-dev-shm-usage')
 
-browser = webdriver.Chrome(options=options)  # Selenium Manager 會自動處理驅動程式
+# browser = webdriver.Chrome(options=options)  # Selenium Manager 會自動處理驅動程式
 
 # options = Options()
 # options.add_argument("--disable-notifications")    
@@ -252,7 +252,8 @@ def new_snk_data(id):
             
         else :     
             size_dict['size']=size
-            size_dict['price']=int((int(price_list[count]) * 1.07) + 990)
+            # size_dict['price']=int((int(price_list[count]) * 1.07) + 990)
+            size_dict['price']=((float(price_list[count])+990)+(float(price_list[count])*0.07))*0.22 + 230 
             # size_dict[size]=int((int(price_list[count]) * 1.07) + 990)
         infos.append(size_dict)
         size+=0.5
@@ -274,7 +275,8 @@ def main(id):
     except Exception as err : 
         print(err)
         china_data="Something error"
-    kream_data=get_kream_result(get_kream_id(id))
+    
+    # kream_data=get_kream_result(get_kream_id(id))
     # try : kream_data=get_kream_result(get_kream_id(id))
     # except Exception as err : 
     #     print(err)
@@ -284,7 +286,7 @@ def main(id):
     data_dict={
         'snk':snk_data,
         'china':china_data,
-        'kream':kream_data
+        'kream':None
     }
     return data_dict
 
