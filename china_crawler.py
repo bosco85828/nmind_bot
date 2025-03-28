@@ -33,7 +33,7 @@ class Crawler:
                 }
             )
 
-        result_list = [ {'size':product_info['options'][1]['value'],'price':float(product_info['price'])} for product_info in product_infos ]
+        # result_list = [ {'size':product_info['options'][1]['value'],'price':float(product_info['price'])} for product_info in product_infos ]
         sorted_result_list = sorted(result_list, key=lambda x: float(x['size']))
                 
         return sorted_result_list
