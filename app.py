@@ -121,7 +121,7 @@ def handle_message(event):
             sendtext(event,err)
         
         try : sendtext(event,f"""
-{search_code} + '查詢結果如下' 
+{search_code} 查詢結果如下
 === 中國 === 
 {china_data}
 
