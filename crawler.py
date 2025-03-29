@@ -253,7 +253,7 @@ def new_snk_data(id):
         else :     
             size_dict['size']=size
             # size_dict['price']=int((int(price_list[count]) * 1.07) + 990)
-            size_dict['price']=((float(price_list[count])+990)+(float(price_list[count])*0.07))*0.22 + 230 
+            size_dict['price']=int(((float(price_list[count])+990)+(float(price_list[count])*0.07))*0.22 + 230 )
             # size_dict[size]=int((int(price_list[count]) * 1.07) + 990)
         infos.append(size_dict)
         size+=0.5
