@@ -300,9 +300,8 @@ if __name__ == "__main__":
     # pprint(get_kream_result(get_kream_id('djiopajdopiasd')))
     data= main('B75807')
     import json 
-    print(data)
-    result=json.dumps(data,ensure_ascii=False).replace('}, {','\n').replace('[{','\n').replace('],','\n')
-    print(result)
+    print(data['中國'])
+    
 
     
     

@@ -110,9 +110,9 @@ def handle_message(event):
             if data:
                 # result=json.dumps(data,ensure_ascii=False).replace('}, {','\n').replace('[{','\n').replace('],','\n')
                 
-                china_data = "\n".join(data['中國']) if data.get['中國'] else None
-                japen_data = "\n".join(data['日本']) if data.get['日本'] else None
-                korea_data = "\n".join(data['韓國']) if data.get['韓國'] else None
+                china_data = "\n".join(data['大陸']) if data.get('大陸') else None
+                japen_data = "\n".join(data['日本']) if data.get('日本') else None
+                korea_data = "\n".join(data['韓國']) if data.get('韓國') else None
             else : 
                 sendtext(event,"查無此產品")  
         except Exception as err : 
