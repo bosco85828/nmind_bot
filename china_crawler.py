@@ -38,7 +38,7 @@ class Crawler:
             result_list.append(
                 {
                     'size':size['value'],
-                    'price':price
+                    '換算台幣':price
                 }
             )
         print(result_list)

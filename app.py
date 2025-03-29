@@ -108,13 +108,27 @@ def handle_message(event):
         try:
             data=main(search_code)
             if data:
-                result=json.dumps(data).replace('}, {','\n').replace('[{','\n').replace('],','\n')
+                # result=json.dumps(data,ensure_ascii=False).replace('}, {','\n').replace('[{','\n').replace('],','\n')
+                
+                china_data = "\n".join(data['中國']) if data.get['中國'] else None
+                japen_data = "\n".join(data['日本']) if data.get['日本'] else None
+                korea_data = "\n".join(data['韓國']) if data.get['韓國'] else None
             else : 
                 sendtext(event,"查無此產品")  
         except Exception as err : 
             sendtext(event,err)
         
-        try : sendtext(event,search_code + '查詢結果如下\n' + result)
+        try : sendtext(event,f"""
+{search_code} + '查詢結果如下' 
+=== 中國 === 
+{china_data}
+
+=== 日本 ===
+{japen_data}
+
+=== 韓國 ===
+{korea_data}
+                       """)
         except Exception as err : 
             sendtext(event,{err})
     

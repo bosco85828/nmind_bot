@@ -202,7 +202,7 @@ def get_kream_result(kream_id):
         pass
 
     print(result)
-    data=[ {'size':info['option'],'price':info['lowest_ask']}  for info in result['sales_options'] ]
+    data=[ {'size':info['option'],'換算台幣':info['lowest_ask']}  for info in result['sales_options'] ]
 
     return data
 
@@ -248,12 +248,12 @@ def new_snk_data(id):
         if price_list[count] == 0 : 
             # size_dict[size]="None"
             size_dict['size']=size
-            size_dict['price']="None"
+            size_dict['換算台幣']="None"
             
         else :     
             size_dict['size']=size
             # size_dict['price']=int((int(price_list[count]) * 1.07) + 990)
-            size_dict['price']=int(((float(price_list[count])+990)+(float(price_list[count])*0.07))*0.22 + 230 )
+            size_dict['換算台幣']=int(((float(price_list[count])+990)+(float(price_list[count])*0.07))*0.22 + 230 )
             # size_dict[size]=int((int(price_list[count]) * 1.07) + 990)
         infos.append(size_dict)
         size+=0.5
@@ -284,9 +284,9 @@ def main(id):
     
 
     data_dict={
-        'snk':snk_data,
-        'china':china_data,
-        'kream':None
+        '日本':snk_data,
+        '大陸':china_data,
+        '韓國':None
     }
     return data_dict
 
@@ -298,7 +298,11 @@ if __name__ == "__main__":
     # print(get_kream_id('DZ1382-001'))
     # print(get_kream_id('DZ1382-001'))
     # pprint(get_kream_result(get_kream_id('djiopajdopiasd')))
-    pprint(main('MR530AD'))
+    data= main('B75807')
+    import json 
+    print(data)
+    result=json.dumps(data,ensure_ascii=False).replace('}, {','\n').replace('[{','\n').replace('],','\n')
+    print(result)
 
     
     
