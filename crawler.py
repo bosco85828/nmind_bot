@@ -300,7 +300,20 @@ if __name__ == "__main__":
     # pprint(get_kream_result(get_kream_id('djiopajdopiasd')))
     data= main('B75807')
     import json 
-    print(data['中國'])
+
+    china_data = "\n".join(json.dumps(item, ensure_ascii=False) for item in data['大陸'])  if data.get('大陸') else None
+    japen_data = "\n".join(json.dumps(item, ensure_ascii=False) for item in data['日本']) if data.get('日本') else None
+    korea_data = "\n".join(json.dumps(item, ensure_ascii=False) for item in data['韓國']) if data.get('韓國') else None
+    
+    print(f"""
+    === 中國 ===
+    {china_data}
+    === 日本 === 
+    {japen_data}
+    === 韓國 ===
+    {korea_data}
+    """)
+
     
 
     
