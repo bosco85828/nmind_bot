@@ -7,32 +7,67 @@ from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import time
-# from selenium.webdriver.chrome.options import Options
-# from selenium.webdriver.chrome.service import Service
-# from selenium.webdriver.common.keys import Keys
-# from selenium.webdriver.support.ui import WebDriverWait
-# from selenium.webdriver.support import expected_conditions as EC
-# from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 import pytz
 import re
 from dotenv import load_dotenv
 import os 
 from datetime import datetime, timezone , timedelta
 from china_crawler import main as china_crawler_main
-# from selenium import webdriver
-# from selenium.webdriver.chrome.options import Options
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 # options = Options()
 # options.add_argument("--disable-notifications")
 # options.add_argument("--window-size=1920,1080")
-# options.add_argument("--headless")
+# # options.add_argument("--headless")
 # options.add_argument('--disable-gpu')
 # options.add_argument('--no-sandbox')
 # options.add_argument('--enable-logging')
 # options.add_argument('--disable-dev-shm-usage')
 
+# print(321)
 # browser = webdriver.Chrome(options=options)  # Selenium Manager 會自動處理驅動程式
+# print(123)
 
+
+# from selenium import webdriver
+from seleniumwire import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+
+# 配置 Chrome 選項
+def get_driver():
+    chrome_options = Options()
+    
+    # 可選：啟用無頭模式（適用於無 GUI 的環境，例如伺服器）
+    chrome_options.add_argument("--headless")  # 無頭模式
+    chrome_options.add_argument("--no-sandbox")  # 避免權限問題
+    chrome_options.add_argument("--disable-dev-shm-usage")  # 避免共享內存問題
+    
+    # 可選：設置窗口大小（在非無頭模式下有用）
+    chrome_options.add_argument("--window-size=1920,1080")
+    chrome_options.add_argument("user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36")
+
+    
+    # 自動管理 ChromeDriver（使用 webdriver-manager 避免手動下載）
+    from webdriver_manager.chrome import ChromeDriverManager
+    
+    # 設置 ChromeDriver 服務
+    service = Service(ChromeDriverManager().install())
+    
+    # 初始化 WebDriver
+    driver = webdriver.Chrome(service=service, options=chrome_options)
+    return driver
 # options = Options()
 # options.add_argument("--disable-notifications")    
 # # options.add_argument("start-maximized")
@@ -47,7 +82,7 @@ from china_crawler import main as china_crawler_main
 # browser = webdriver.Chrome(service=service , options=options)
 
 current_time=datetime.now().strftime("%Y%m%d%H%M%S%z")
-
+browser=get_driver()
 
 def get_kream_token():
     
@@ -58,14 +93,16 @@ def get_kream_token():
         browser.maximize_window()
         wait=WebDriverWait(browser,10)
         locator=(By.XPATH,'//input[@type="email"]')
+        
         acount=wait.until(EC.presence_of_element_located(locator))
         locator=(By.XPATH,'//input[@type="password"]')
         password=wait.until(EC.presence_of_element_located(locator))
 
         acount.send_keys('liyuqian93117@naver.com')
-        password.send_keys('931117@lyq')
+        password.send_keys('931117@mty')
         
-        locator=(By.XPATH,'//a[@class="btn full solid"]')
+        locator=(By.XPATH,'//button[@class="btn full solid"]')
+        browser.get_screenshot_as_file("1.png")
         submit=wait.until(EC.element_to_be_clickable(locator))
         submit.click()
         time.sleep(3)
@@ -83,6 +120,7 @@ def get_kream_token():
                 device_id=i.headers['x-kream-device-id']
             
             if token and device_id : 
+                print(str(token + "," +device_id))
                 with open('token.txt','w+') as f : 
                     f.write(str(token + "," +device_id))
                 browser.quit()
@@ -190,7 +228,12 @@ def get_kream_result(kream_id):
     # result=requests.get(url,headers=header)
     # print(result)
     # return
-    result=requests.get(url,headers=header).json()
+    
+    result=requests.get(url,headers=header)
+    print(result)
+    result=result.json()
+    
+
 
     try : 
         if 'expired' in  result['description'] : 
@@ -297,22 +340,23 @@ if __name__ == "__main__":
     # print(get_kream_token())
     # print(get_kream_id('DZ1382-001'))
     # print(get_kream_id('DZ1382-001'))
-    # pprint(get_kream_result(get_kream_id('djiopajdopiasd')))
-    data= main('B75807')
-    import json 
+    pprint(get_kream_result(get_kream_id('DZ1382-001')))
+    # print(get_kream_token())
+    # data= main('B75807')
+    # import json 
 
-    china_data = "\n".join(json.dumps(item, ensure_ascii=False) for item in data['大陸'])  if data.get('大陸') else None
-    japen_data = "\n".join(json.dumps(item, ensure_ascii=False) for item in data['日本']) if data.get('日本') else None
-    korea_data = "\n".join(json.dumps(item, ensure_ascii=False) for item in data['韓國']) if data.get('韓國') else None
+    # china_data = "\n".join(json.dumps(item, ensure_ascii=False) for item in data['大陸'])  if data.get('大陸') else None
+    # japen_data = "\n".join(json.dumps(item, ensure_ascii=False) for item in data['日本']) if data.get('日本') else None
+    # korea_data = "\n".join(json.dumps(item, ensure_ascii=False) for item in data['韓國']) if data.get('韓國') else None
     
-    print(f"""
-    === 中國 ===
-    {china_data}
-    === 日本 === 
-    {japen_data}
-    === 韓國 ===
-    {korea_data}
-    """)
+    # print(f"""
+    # === 中國 ===
+    # {china_data}
+    # === 日本 === 
+    # {japen_data}
+    # === 韓國 ===
+    # {korea_data}
+    # """)
 
     
 

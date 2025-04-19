@@ -19,7 +19,7 @@ class Crawler:
         
         raw_data = requests.get(url).json()
         for data in raw_data['data']['products'] :             
-            if data['brief'] == product_id :                 
+            if str(data['brief']).lower() == product_id.lower() :                 
                 product_infos = data['variants']
                 break
         else : 
