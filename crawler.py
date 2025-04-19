@@ -82,7 +82,7 @@ def get_driver():
 # browser = webdriver.Chrome(service=service , options=options)
 
 current_time=datetime.now().strftime("%Y%m%d%H%M%S%z")
-browser=get_driver()
+# browser=get_driver()
 
 def get_kream_token():
     
